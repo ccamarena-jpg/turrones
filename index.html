@@ -358,13 +358,24 @@ async function verResultados(m) {
   $("modo").textContent = API_URL ? "Datos guardados en Google Sheets." : "Modo local: los datos se guardan solo en este navegador.";
 
   if (personas) {
-    const chips = m === "disfraces" ? M.criterios.map(c => {
-      const best = [...r].sort((a, b) => b[c.k] - a[c.k])[0];
-      return `<span>${c.t}: <b>${esc(best.item)}</b></span>`;
-    }).join("") : "";
-    $("winner").innerHTML = `<div class="winner"><small>${m === "disfraces" ? "MEJOR DISFRAZ" : "GANADOR"}</small><h3>${esc(r[0].item)}</h3>
-      <span>${r[0][main].toFixed(2)} de 5 en ${M.criterios.find(c => c.main).t.toLowerCase()}</span>
-      ${chips ? `<div class="chips">${chips}</div>` : ""}</div>`;
+    if (m === "disfraces") {
+      // Un ganador por categoría. Desempate: más votos, luego mejor promedio general; si sigue igual se avisa.
+      const media = x => prom(M.criterios.map(c => x[c.k]));
+      const ganador = k => {
+        const o = [...r].sort((a, b) => b[k] - a[k] || b.votos - a.votos || media(b) - media(a));
+        const empate = o[1] && o[1][k] === o[0][k] && o[1].votos === o[0].votos && media(o[1]) === media(o[0]);
+        return { g: o[0], empate: empate ? o[1].item : "" };
+      };
+      $("winner").innerHTML = M.criterios.map(c => {
+        const { g, empate } = ganador(c.k);
+        return `<div class="winner"><small>🏆 ${c.t.toUpperCase()}</small><h3>${esc(g.item)}</h3>
+          <span>${g[c.k].toFixed(2)} de 5 · ${g.votos} ${g.votos === 1 ? "voto" : "votos"}</span>
+          ${empate ? `<div class="chips"><span>Empate exacto con <b>${esc(empate)}</b></span></div>` : ""}</div>`;
+      }).join("");
+    } else {
+      $("winner").innerHTML = `<div class="winner"><small>GANADOR</small><h3>${esc(r[0].item)}</h3>
+        <span>${r[0][main].toFixed(2)} de 5 en ${M.criterios.find(c => c.main).t.toLowerCase()}</span></div>`;
+    }
   }
   const subs = M.criterios.filter(c => !c.main);
   $("rank").innerHTML = r.map((x, i) => `
