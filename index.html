@@ -3,67 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cata de Turrones</title>
+<title>Halloween TT Audit '26</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
-    --bg: #1a0f33;
-    --card: #231445;
-    --card-line: #35205f;
-    --ink: #f4eefc;
-    --muted: #a99bc7;
-    --gold: #f2b84b;
-    --gold-soft: #3d2a14;
-    --violet: #b88af0;
-    --violet-deep: #8d5fd6;
-    --btn: #1b0f35;
+    --bg: #140d1f;
+    --card: #1f1530;
+    --card-line: #3a2658;
+    --ink: #f6ecd6;
+    --muted: #b3a5cc;
+    --orange: #ff8a1f;
+    --orange-soft: #4a2a10;
+    --purple: #8a4dff;
+    --purple-deep: #5a22c9;
+    --btn: #140d1f;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink);
     font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif; }
-  body { min-height: 100vh; }
+  body { min-height: 100vh;
+    background-image: radial-gradient(circle at 100% 0, rgba(138,77,255,.22), transparent 45%),
+                      radial-gradient(circle at 0 100%, rgba(255,138,31,.18), transparent 45%); background-attachment: fixed; }
   .wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px 120px; }
   .hidden { display: none !important; }
 
   /* Login */
   .login { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
-  .login h1 { font-size: 40px; line-height: 1.05; margin: 0; }
-  .login h1 span { color: var(--violet); }
+  .tag { display: inline-block; align-self: flex-start; border: 3px solid #e0392b; color: #ff6a5c; font-weight: 800;
+    letter-spacing: .06em; padding: 6px 12px; border-radius: 6px; transform: rotate(-3deg); font-size: 14px; }
+  .login h1 { font-size: 46px; line-height: 1; margin: 0; font-weight: 800; }
+  .login h1 span { color: var(--orange); display: block; }
+  .login h1 em { font-style: normal; color: var(--purple); }
   .login p { color: var(--muted); margin: 0; }
   .hola { display: flex; align-items: baseline; gap: 10px; font-size: 28px; font-weight: 800; }
-  .hola input { flex: 1; min-width: 0; background: transparent; border: 0; border-bottom: 3px solid var(--violet);
-    color: var(--gold); font: inherit; padding: 4px 2px; outline: none; }
+  .hola input { flex: 1; min-width: 0; background: transparent; border: 0; border-bottom: 3px solid var(--purple);
+    color: var(--orange); font: inherit; padding: 4px 2px; outline: none; }
   .hola input::placeholder { color: #5a4883; }
 
   .btn { border: 0; border-radius: 999px; padding: 16px 26px; font: inherit; font-weight: 800; font-size: 18px;
-    background: var(--violet); color: #1b0f35; cursor: pointer; }
+    background: var(--orange); color: #2a1200; cursor: pointer; }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
   .btn.ghost { background: transparent; color: var(--muted); border: 2px solid var(--card-line); }
   .btn.small { font-size: 14px; padding: 10px 16px; }
 
+  /* Menu */
+  .menu h2 { font-size: 34px; margin: 6px 0 4px; }
+  .menu h2 span { color: var(--orange); }
+  .menu .sub { color: var(--muted); margin: 0 0 22px; }
+  .opt { display: block; width: 100%; text-align: left; font: inherit; color: var(--ink); cursor: pointer;
+    background: var(--card); border: 2px solid var(--card-line); border-radius: 28px; padding: 22px 20px; margin-bottom: 16px; }
+  .opt .em { font-size: 44px; line-height: 1; }
+  .opt h3 { margin: 10px 0 4px; font-size: 24px; }
+  .opt p { margin: 0; color: var(--muted); font-size: 15px; }
+  .opt.o1 { border-color: var(--orange); background: linear-gradient(135deg, #3a1f0c, #1f1530); }
+  .opt.o2 { border-color: var(--purple); background: linear-gradient(135deg, #2c1560, #1f1530); }
+  .linkrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+
   /* Progreso */
   .top { display: flex; justify-content: space-between; color: var(--muted); font-size: 18px; margin: 4px 0 10px; }
-  .bars { display: flex; gap: 8px; margin-bottom: 18px; }
+  .bars { display: flex; gap: 6px; margin-bottom: 18px; }
   .bars i { flex: 1; height: 10px; border-radius: 99px; background: var(--card-line); }
-  .bars i.on { background: var(--violet); }
-  .bars i.done { background: var(--gold); }
+  .bars i.on { background: var(--purple); }
+  .bars i.done { background: var(--orange); }
 
   .head { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
-  .badge { width: 84px; height: 84px; flex: none; border-radius: 22px; background: var(--violet); color: #1b0f35;
+  .badge { width: 84px; height: 84px; flex: none; border-radius: 22px; background: var(--purple); color: #fff;
     font-size: 44px; font-weight: 800; display: grid; place-items: center; }
   .head h2 { margin: 0 0 4px; font-size: 32px; }
   .head p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.3; }
 
   .crit { background: var(--card); border: 1.5px solid var(--card-line); border-radius: 26px; padding: 18px 18px 14px; margin-bottom: 16px; }
-  .crit.main { border-color: var(--gold); }
+  .crit.main { border-color: var(--orange); }
   .crit h3 { margin: 0 0 4px; font-size: 22px; }
   .crit p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
   .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .scale button { aspect-ratio: 1; border-radius: 18px; border: 2px solid var(--card-line); background: #150a2b;
+  .scale button { aspect-ratio: 1; border-radius: 18px; border: 2px solid var(--card-line); background: #0f0818;
     color: var(--ink); font: inherit; font-size: 24px; font-weight: 800; cursor: pointer; }
-  .scale button.fill { background: var(--gold-soft); border-color: var(--gold); }
-  .scale button.sel { background: var(--gold); color: #2a1a05; }
+  .scale button.fill { background: var(--orange-soft); border-color: var(--orange); }
+  .scale button.sel { background: var(--orange); color: #2a1200; }
   .ends { display: flex; justify-content: space-between; color: var(--muted); margin-top: 10px; font-size: 15px; }
+  .skip { display: block; margin: 4px auto 0; background: none; border: 0; color: var(--muted); text-decoration: underline;
+    font: inherit; cursor: pointer; padding: 8px; }
 
   .nav { position: fixed; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, var(--bg) 35%); padding: 24px 16px calc(16px + env(safe-area-inset-bottom)); }
   .nav .in { max-width: 480px; margin: 0 auto; display: flex; gap: 12px; }
@@ -72,23 +92,30 @@
 
   /* Resultados */
   .res h2 { font-size: 32px; margin: 8px 0 4px; }
-  .res .sub { color: var(--muted); margin: 0 0 18px; }
-  .winner { background: linear-gradient(135deg, #4a2b86, #2a1656); border: 2px solid var(--gold); border-radius: 26px; padding: 20px; margin-bottom: 16px; }
-  .winner small { color: var(--gold); font-weight: 800; letter-spacing: .08em; }
+  .res .sub { color: var(--muted); margin: 0 0 14px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tabs button { flex: 1; border: 2px solid var(--card-line); background: transparent; color: var(--muted); font: inherit; font-weight: 800;
+    border-radius: 999px; padding: 10px 8px; cursor: pointer; }
+  .tabs button.on { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .winner { background: linear-gradient(135deg, #5a3210, #2a1656); border: 2px solid var(--orange); border-radius: 26px; padding: 20px; margin-bottom: 16px; }
+  .winner small { color: var(--orange); font-weight: 800; letter-spacing: .08em; }
   .winner h3 { margin: 4px 0 2px; font-size: 30px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chips span { background: #0f0818; border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+  .chips b { color: var(--orange); }
   .rank { display: flex; flex-direction: column; gap: 12px; }
   .row { background: var(--card); border: 1.5px solid var(--card-line); border-radius: 22px; padding: 14px 16px; }
   .row .t { display: flex; align-items: center; gap: 12px; }
-  .pos { width: 38px; height: 38px; border-radius: 12px; background: var(--violet); color: #1b0f35; font-weight: 800; display: grid; place-items: center; flex: none; }
-  .row:first-child .pos { background: var(--gold); }
+  .pos { width: 38px; height: 38px; border-radius: 12px; background: var(--purple); color: #fff; font-weight: 800; display: grid; place-items: center; flex: none; }
+  .row:first-child .pos { background: var(--orange); color: #2a1200; }
   .row .name { font-weight: 800; font-size: 19px; flex: 1; }
-  .row .score { font-size: 24px; font-weight: 800; color: var(--gold); }
-  .mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; text-align: center; }
-  .mini div { background: #150a2b; border-radius: 12px; padding: 8px 2px; }
+  .row .score { font-size: 24px; font-weight: 800; color: var(--orange); }
+  .mini { display: grid; gap: 6px; margin-top: 12px; text-align: center; }
+  .mini div { background: #0f0818; border-radius: 12px; padding: 8px 2px; }
   .mini b { display: block; font-size: 17px; }
   .mini span { color: var(--muted); font-size: 12px; }
-  .bar { height: 8px; border-radius: 99px; background: #150a2b; margin-top: 12px; overflow: hidden; }
-  .bar i { display: block; height: 100%; background: var(--gold); border-radius: 99px; }
+  .bar { height: 8px; border-radius: 99px; background: #0f0818; margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--orange); border-radius: 99px; }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
   details { margin-top: 18px; background: var(--card); border-radius: 18px; padding: 12px 14px; border: 1.5px solid var(--card-line); }
   summary { cursor: pointer; font-weight: 800; }
@@ -103,15 +130,30 @@
 
 <!-- LOGIN -->
 <main id="login" class="wrap login">
-  <div>
-    <h1>Cata de<br><span>Turrones</span></h1>
-  </div>
-  <p>Cuatro turrones, una sola ganadora. Califica con calma y sin copiar al vecino.</p>
+  <span class="tag">TT AUDIT · RRHH</span>
+  <h1>🎃 Halloween<span>TT Audit <em>'26</em></span></h1>
+  <p>Disfraces, turrones y buen humor. Dinos quién eres y empezamos.</p>
   <label class="hola">Hola,
     <input id="nombre" type="text" placeholder="tu nombre" maxlength="40" autocomplete="given-name">
   </label>
-  <button id="entrar" class="btn" disabled>Empezar la cata</button>
-  <button id="verRes0" class="btn ghost small" style="align-self:flex-start">Ver resultados</button>
+  <button id="entrar" class="btn" disabled>Entrar</button>
+  <div class="linkrow">
+    <button id="verD0" class="btn ghost small">Resultados disfraces</button>
+    <button id="verT0" class="btn ghost small">Resultados turrones</button>
+  </div>
+</main>
+
+<!-- MENU -->
+<main id="menu" class="wrap menu hidden">
+  <h2>Hola, <span id="mNombre"></span> 👻</h2>
+  <p class="sub">¿Qué quieres calificar primero?</p>
+  <button class="opt o1" id="optD"><div class="em">🎃</div><h3>Elige tu concurso de disfraces</h3><p>Califica el mejor disfraz, el más creativo y el más divertido.</p></button>
+  <button class="opt o2" id="optT"><div class="em">🍬</div><h3>Evaluemos turrones</h3><p>Degustación de 4 marcas y votación del favorito.</p></button>
+  <div class="linkrow">
+    <button id="verD1" class="btn ghost small">Resultados disfraces</button>
+    <button id="verT1" class="btn ghost small">Resultados turrones</button>
+    <button id="cambiar" class="btn ghost small">Cambiar nombre</button>
+  </div>
 </main>
 
 <!-- CATA -->
@@ -120,9 +162,10 @@
   <div class="bars" id="bars"></div>
   <div class="head">
     <div class="badge" id="num"></div>
-    <div><h2 id="tname"></h2><p>Prueba un trozo con calma antes de calificar.</p></div>
+    <div><h2 id="tname"></h2><p id="intro"></p></div>
   </div>
   <div id="criterios"></div>
+  <button id="saltar" class="skip hidden">No vi este disfraz, saltar</button>
   <div class="nav"><div class="in">
     <button id="ant" class="btn ghost">Anterior</button>
     <button id="sig" class="btn" disabled>Siguiente</button>
@@ -131,7 +174,11 @@
 
 <!-- RESULTADOS -->
 <main id="res" class="wrap res hidden">
-  <h2>Resultados</h2>
+  <h2 id="resTitulo">Resultados</h2>
+  <div class="tabs">
+    <button id="tabD">🎃 Disfraces</button>
+    <button id="tabT">🍬 Turrones</button>
+  </div>
   <p class="sub" id="resSub"></p>
   <div id="winner"></div>
   <div class="rank" id="rank"></div>
@@ -146,152 +193,213 @@
 
 <script>
 /* ===== Configuración =====
-   Pega aquí la URL /exec de tu Apps Script (ver apps-script/Code.gs) para guardar
-   en un Google Sheet compartido. Vacío = se guarda solo en este navegador. */
+   URL /exec de tu Apps Script (ver Code.gs). Vacío = se guarda solo en este navegador. */
 const API_URL = "https://script.google.com/macros/s/AKfycbyEl9g9nfUSnnfFvGLR00STRMaS4LDyKlKh9pWToLBpo_r8di13JexhJXV1f414waQ36A/exec";
 
-const TURRONES = ["Dolce Capriccio", "La Nuez", "San Antonio", "San José"];
-const CRITERIOS = [
-  { k: "masa",    t: "Masa",    d: "Textura, consistencia y cómo se deshace." },
-  { k: "miel",    t: "Miel",    d: "Sabor, dulzor y presencia de la miel." },
-  { k: "textura", t: "Textura", d: "Crocante, suave o pegajoso: cómo se siente al morder." },
-  { k: "sabor",   t: "Sabor",   d: "Balance general de sabores y ganas de repetir." },
-  { k: "general", t: "Puntaje general", d: "Tu nota global. Esta decide al ganador.", main: true },
-];
+const PERSONAS = ["Daniela", "Ale Pablo", "Ale Castro", "Cris", "Cristel", "Ole", "Massi", "Ale",
+  "Mathi", "Marlon", "Patrick", "Jaqui", "Erberth", "Rox", "Flavia"];
+
+const MODOS = {
+  turrones: {
+    hoja: "turrones", ls: "turrones_filas", clave: "turron", etiqueta: "Turrón",
+    items: ["Dolce Capriccio", "La Nuez", "San Antonio", "San José"],
+    intro: "Prueba un trozo con calma antes de calificar.",
+    extremos: ["Flojo", "Gloria"], excel: "cata-turrones.xlsx", saltar: false,
+    criterios: [
+      { k: "masa",    t: "Masa",    d: "Textura, consistencia y cómo se deshace." },
+      { k: "miel",    t: "Miel",    d: "Sabor, dulzor y presencia de la miel." },
+      { k: "textura", t: "Textura", d: "Crocante, suave o pegajoso: cómo se siente al morder." },
+      { k: "sabor",   t: "Sabor",   d: "Balance general de sabores y ganas de repetir." },
+      { k: "general", t: "Puntaje general", d: "Tu nota global. Esta decide al ganador.", main: true },
+    ],
+  },
+  disfraces: {
+    hoja: "disfraces", ls: "disfraces_filas", clave: "participante", etiqueta: "Participante",
+    items: PERSONAS,
+    intro: "Mira el disfraz con calma antes de calificar.",
+    extremos: ["Meh", "De miedo"], excel: "concurso-disfraces.xlsx", saltar: true,
+    criterios: [
+      { k: "mejor",     t: "Mejor disfraz",  d: "Calidad y esfuerzo del look completo.", main: true },
+      { k: "creativo",  t: "Más creativo",   d: "Originalidad e ingenio de la idea." },
+      { k: "divertido", t: "Más divertido",  d: "Cuánta risa y buena vibra provoca." },
+    ],
+  },
+};
+
 const $ = id => document.getElementById(id);
-let nombre = "", paso = 0, notas = {};
+const norm = s => String(s).trim().toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let nombre = "", modo = "turrones", items = [], paso = 0, notas = {}, resModo = "disfraces";
 
 /* ===== Almacenamiento ===== */
-const LS = "turrones_filas";
-let memoria = [];
-const leerLocal = () => { try { return JSON.parse(localStorage.getItem(LS)) || []; } catch { return memoria; } };
-const escribirLocal = v => { memoria = v; try { localStorage.setItem(LS, JSON.stringify(v)); } catch {} };
-const norm = s => s.trim().toLowerCase();
+const memoria = {};
+const leerLocal = m => { try { return JSON.parse(localStorage.getItem(MODOS[m].ls)) || []; } catch { return memoria[m] || []; } };
+const escribirLocal = (m, v) => { memoria[m] = v; try { localStorage.setItem(MODOS[m].ls, JSON.stringify(v)); } catch {} };
 
-async function guardar(filas) {
+async function guardar(m, filas) {
   if (API_URL) {
-    const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ filas }) });
+    const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ hoja: MODOS[m].hoja, filas }) });
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || "Error al guardar");
     return;
   }
-  const todas = leerLocal();
+  const clave = MODOS[m].clave, todas = leerLocal(m);
   filas.forEach(f => {
-    const i = todas.findIndex(x => norm(x.nombre) === norm(f.nombre) && x.turron === f.turron);
+    const i = todas.findIndex(x => norm(x.nombre) === norm(f.nombre) && x[clave] === f[clave]);
     if (i >= 0) todas[i] = f; else todas.push(f);
   });
-  escribirLocal(todas);
+  escribirLocal(m, todas);
 }
-async function cargar() {
+async function cargar(m) {
   if (API_URL) {
-    const r = await fetch(API_URL);
+    const r = await fetch(API_URL + "?hoja=" + MODOS[m].hoja);
     const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "Error al leer");
     return j.filas || [];
   }
-  return leerLocal();
+  return leerLocal(m);
 }
 
-/* ===== Login ===== */
-$("nombre").addEventListener("input", e => $("entrar").disabled = !e.target.value.trim());
-$("nombre").addEventListener("keydown", e => { if (e.key === "Enter" && !$("entrar").disabled) $("entrar").click(); });
-$("entrar").onclick = () => {
-  nombre = $("nombre").value.trim();
-  paso = 0; notas = {};
-  TURRONES.forEach(t => notas[t] = {});
-  mostrar("cata"); pintar();
-};
-$("verRes0").onclick = verResultados;
-
+/* ===== Navegación ===== */
 function mostrar(id) {
-  ["login", "cata", "res"].forEach(x => $(x).classList.toggle("hidden", x !== id));
+  ["login", "menu", "cata", "res"].forEach(x => $(x).classList.toggle("hidden", x !== id));
   window.scrollTo(0, 0);
 }
+$("nombre").addEventListener("input", e => $("entrar").disabled = !e.target.value.trim());
+$("nombre").addEventListener("keydown", e => { if (e.key === "Enter" && !$("entrar").disabled) $("entrar").click(); });
+$("entrar").onclick = () => { nombre = $("nombre").value.trim(); $("mNombre").textContent = nombre; mostrar("menu"); };
+$("cambiar").onclick = () => mostrar("login");
+$("optD").onclick = () => empezar("disfraces");
+$("optT").onclick = () => empezar("turrones");
+["verD0", "verD1"].forEach(i => $(i).onclick = () => verResultados("disfraces"));
+["verT0", "verT1"].forEach(i => $(i).onclick = () => verResultados("turrones"));
 
-/* ===== Cata ===== */
-function completo(t) { return CRITERIOS.every(c => notas[t][c.k]); }
+/* ===== Calificar ===== */
+function empezar(m) {
+  modo = m; paso = 0; notas = {};
+  // En el concurso no te calificas a ti mismo
+  items = MODOS[m].items.filter(x => m !== "disfraces" || norm(x) !== norm(nombre));
+  items.forEach(t => notas[t] = {});
+  mostrar("cata"); pintar();
+}
+const completo = t => notas[t].skip || MODOS[modo].criterios.every(c => notas[t][c.k]);
 
 function pintar() {
-  const t = TURRONES[paso];
+  const M = MODOS[modo], t = items[paso];
   $("saludo").textContent = "Hola, " + nombre;
-  $("paso").textContent = (paso + 1) + " de " + TURRONES.length;
-  $("bars").innerHTML = TURRONES.map((x, i) => `<i class="${i === paso ? "on" : i < paso ? "done" : ""}"></i>`).join("");
+  $("paso").textContent = (paso + 1) + " de " + items.length;
+  $("bars").innerHTML = items.map((x, i) => `<i class="${i === paso ? "on" : i < paso ? "done" : ""}"></i>`).join("");
   $("num").textContent = paso + 1;
-  $("tname").textContent = t;
-  $("criterios").innerHTML = CRITERIOS.map(c => {
+  $("tname").textContent = M.etiqueta === "Turrón" ? "Turrón: " + t : t;
+  $("intro").textContent = M.intro;
+  $("criterios").innerHTML = M.criterios.map(c => {
     const v = notas[t][c.k] || 0;
     const btns = [1, 2, 3, 4, 5].map(n =>
       `<button data-k="${c.k}" data-n="${n}" class="${n === v ? "sel" : n < v ? "fill" : ""}">${n}</button>`).join("");
     return `<section class="crit ${c.main ? "main" : ""}"><h3>${c.t}</h3><p>${c.d}</p>
-      <div class="scale">${btns}</div><div class="ends"><span>Flojo</span><span>Gloria</span></div></section>`;
+      <div class="scale">${btns}</div><div class="ends"><span>${M.extremos[0]}</span><span>${M.extremos[1]}</span></div></section>`;
   }).join("");
-  $("ant").style.visibility = paso === 0 ? "hidden" : "visible";
-  $("sig").textContent = paso === TURRONES.length - 1 ? "Finalizar" : "Siguiente";
+  $("saltar").classList.toggle("hidden", !M.saltar);
+  $("sig").textContent = paso === items.length - 1 ? "Finalizar" : "Siguiente";
   $("sig").disabled = !completo(t);
 }
 
 $("criterios").addEventListener("click", e => {
   const b = e.target.closest("button[data-k]");
   if (!b) return;
-  notas[TURRONES[paso]][b.dataset.k] = +b.dataset.n;
+  const n = notas[items[paso]];
+  n[b.dataset.k] = +b.dataset.n; delete n.skip;
   pintar();
 });
-$("ant").onclick = () => { paso--; pintar(); window.scrollTo(0, 0); };
-$("sig").onclick = async () => {
-  if (paso < TURRONES.length - 1) { paso++; pintar(); window.scrollTo(0, 0); return; }
+$("ant").onclick = () => { if (paso === 0) return mostrar("menu"); paso--; pintar(); window.scrollTo(0, 0); };
+$("saltar").onclick = () => { notas[items[paso]] = { skip: true }; avanzar(); };
+$("sig").onclick = avanzar;
+
+async function avanzar() {
+  if (paso < items.length - 1) { paso++; pintar(); window.scrollTo(0, 0); return; }
+  const M = MODOS[modo], fecha = new Date().toISOString();
+  const filas = items.filter(t => !notas[t].skip).map(t => ({ fecha, nombre, [M.clave]: t, ...notas[t] }));
+  if (!filas.length) { alert("No calificaste a nadie todavía."); return; }
   $("sig").disabled = true; $("sig").textContent = "Guardando…";
-  const fecha = new Date().toISOString();
-  const filas = TURRONES.map(t => ({ fecha, nombre, turron: t, ...notas[t] }));
-  try { await guardar(filas); verResultados(); }
+  try { await guardar(modo, filas); verResultados(modo); }
   catch (err) { alert("No se pudo guardar: " + err.message); pintar(); }
-};
+}
 
 /* ===== Resultados ===== */
 const prom = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
 let ultimas = [];
 
-function calcular(filas) {
-  return TURRONES.map(t => {
-    const f = filas.filter(x => x.turron === t);
-    const o = { turron: t, votos: f.length };
-    CRITERIOS.forEach(c => o[c.k] = prom(f.map(x => +x[c.k])));
+function calcular(m, filas) {
+  const M = MODOS[m];
+  const main = M.criterios.find(c => c.main).k;
+  return M.items.map(t => {
+    const f = filas.filter(x => x[M.clave] === t);
+    const o = { item: t, votos: f.length };
+    M.criterios.forEach(c => o[c.k] = prom(f.map(x => +x[c.k])));
     return o;
-  }).sort((a, b) => b.general - a.general || b.votos - a.votos);
+  }).filter(o => m === "turrones" || o.votos).sort((a, b) => b[main] - a[main] || b.votos - a.votos);
 }
 
-async function verResultados() {
+async function verResultados(m) {
+  resModo = m;
+  const M = MODOS[m], main = M.criterios.find(c => c.main).k;
   mostrar("res");
-  $("rank").innerHTML = "<p class='note'>Cargando…</p>";
+  $("tabD").classList.toggle("on", m === "disfraces");
+  $("tabT").classList.toggle("on", m === "turrones");
+  $("resSub").textContent = ""; $("winner").innerHTML = "";
+  $("rank").innerHTML = "<p class='note'>Cargando…</p>"; $("tabla").innerHTML = "";
   let filas;
-  try { filas = await cargar(); } catch (e) { $("rank").innerHTML = "<p class='err'>No se pudieron cargar los datos.</p>"; return; }
+  try { filas = await cargar(m); } catch (e) { $("rank").innerHTML = "<p class='err'>No se pudieron cargar los datos.</p>"; return; }
   ultimas = filas;
-  const r = calcular(filas);
+  const r = calcular(m, filas);
   const personas = new Set(filas.map(f => norm(f.nombre))).size;
   $("resSub").textContent = personas ? `${personas} ${personas === 1 ? "persona calificó" : "personas calificaron"}.` : "Aún no hay calificaciones.";
-  $("modo").textContent = API_URL ? "Datos guardados en Google Sheets." : "Modo local: los datos se guardan solo en este navegador. Configura API_URL para compartirlos en un Sheet.";
+  $("modo").textContent = API_URL ? "Datos guardados en Google Sheets." : "Modo local: los datos se guardan solo en este navegador.";
 
-  $("winner").innerHTML = personas ? `<div class="winner"><small>GANADOR</small><h3>${r[0].turron}</h3><span>${r[0].general.toFixed(2)} de 5 en puntaje general</span></div>` : "";
+  if (personas) {
+    const chips = m === "disfraces" ? M.criterios.map(c => {
+      const best = [...r].sort((a, b) => b[c.k] - a[c.k])[0];
+      return `<span>${c.t}: <b>${esc(best.item)}</b></span>`;
+    }).join("") : "";
+    $("winner").innerHTML = `<div class="winner"><small>${m === "disfraces" ? "MEJOR DISFRAZ" : "GANADOR"}</small><h3>${esc(r[0].item)}</h3>
+      <span>${r[0][main].toFixed(2)} de 5 en ${M.criterios.find(c => c.main).t.toLowerCase()}</span>
+      ${chips ? `<div class="chips">${chips}</div>` : ""}</div>`;
+  }
+  const subs = M.criterios.filter(c => !c.main);
   $("rank").innerHTML = r.map((x, i) => `
     <div class="row">
-      <div class="t"><div class="pos">${i + 1}</div><div class="name">${x.turron}</div><div class="score">${x.general.toFixed(2)}</div></div>
-      <div class="bar"><i style="width:${x.general / 5 * 100}%"></i></div>
-      <div class="mini">${CRITERIOS.filter(c => !c.main).map(c => `<div><b>${x[c.k].toFixed(1)}</b><span>${c.t}</span></div>`).join("")}</div>
+      <div class="t"><div class="pos">${i + 1}</div><div class="name">${esc(x.item)}</div><div class="score">${x[main].toFixed(2)}</div></div>
+      <div class="bar"><i style="width:${x[main] / 5 * 100}%"></i></div>
+      <div class="mini" style="grid-template-columns:repeat(${subs.length + 1},1fr)">
+        ${subs.map(c => `<div><b>${x[c.k].toFixed(1)}</b><span>${c.t}</span></div>`).join("")}
+        <div><b>${x.votos}</b><span>Votos</span></div></div>
     </div>`).join("");
 
-  const th = CRITERIOS.map(c => `<th>${c.t === "Puntaje general" ? "Gral" : c.t.slice(0, 4)}</th>`).join("");
-  $("tabla").innerHTML = `<table><tr><th>Nombre</th><th>Turrón</th>${th}</tr>` +
-    filas.map(f => `<tr><td>${esc(f.nombre)}</td><td>${esc(f.turron)}</td>${CRITERIOS.map(c => `<td>${f[c.k]}</td>`).join("")}</tr>`).join("") + "</table>";
+  const th = M.criterios.map(c => `<th>${c.t.slice(0, 5)}</th>`).join("");
+  $("tabla").innerHTML = `<table><tr><th>Nombre</th><th>${M.etiqueta}</th>${th}</tr>` +
+    filas.map(f => `<tr><td>${esc(f.nombre)}</td><td>${esc(f[M.clave])}</td>${M.criterios.map(c => `<td>${f[c.k]}</td>`).join("")}</tr>`).join("") + "</table>";
 }
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-$("refrescar").onclick = verResultados;
-$("volver").onclick = () => mostrar("login");
+$("tabD").onclick = () => verResultados("disfraces");
+$("tabT").onclick = () => verResultados("turrones");
+$("refrescar").onclick = () => verResultados(resModo);
+$("volver").onclick = () => mostrar(nombre ? "menu" : "login");
 $("xlsx").onclick = () => {
-  const cal = ultimas.map(f => ({ Fecha: f.fecha, Nombre: f.nombre, Turrón: f.turron, Masa: f.masa, Miel: f.miel, Textura: f.textura, Sabor: f.sabor, "Puntaje general": f.general }));
-  const rk = calcular(ultimas).map((x, i) => ({ Posición: i + 1, Turrón: x.turron, Votos: x.votos, Masa: +x.masa.toFixed(2), Miel: +x.miel.toFixed(2), Textura: +x.textura.toFixed(2), Sabor: +x.sabor.toFixed(2), "Puntaje general": +x.general.toFixed(2) }));
+  const M = MODOS[resModo], main = M.criterios.find(c => c.main).k;
+  const cal = ultimas.map(f => {
+    const o = { Fecha: f.fecha, Nombre: f.nombre, [M.etiqueta]: f[M.clave] };
+    M.criterios.forEach(c => o[c.t] = f[c.k]);
+    return o;
+  });
+  const rk = calcular(resModo, ultimas).map((x, i) => {
+    const o = { Posición: i + 1, [M.etiqueta]: x.item, Votos: x.votos };
+    M.criterios.forEach(c => o[c.t] = +x[c.k].toFixed(2));
+    return o;
+  });
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cal), "Calificaciones");
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rk), "Ranking");
-  XLSX.writeFile(wb, "cata-turrones.xlsx");
+  XLSX.writeFile(wb, M.excel);
 };
 </script>
 </body>
