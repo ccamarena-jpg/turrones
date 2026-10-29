@@ -29,8 +29,13 @@ function json_(o) {
   return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 }
 
+// Los resultados solo se entregan con el código guardado en Propiedades del script
+// (Configuración del proyecto > Propiedades de la secuencia de comandos > CODIGO_RESULTADOS).
 function doGet(e) {
-  var cfg = cfg_(e && e.parameter && e.parameter.hoja);
+  var p = (e && e.parameter) || {};
+  var esperado = PropertiesService.getScriptProperties().getProperty('CODIGO_RESULTADOS');
+  if (!esperado || String(p.codigo || '') !== esperado) return json_({ ok: false, error: 'Código incorrecto' });
+  var cfg = cfg_(p.hoja);
   var vals = hoja_(cfg).getDataRange().getValues();
   var filas = vals.slice(1).map(function (r) {
     var o = {};

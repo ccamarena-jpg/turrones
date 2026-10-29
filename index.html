@@ -138,21 +138,34 @@
   </label>
   <button id="entrar" class="btn" disabled>Entrar</button>
   <div class="linkrow">
-    <button id="verD0" class="btn ghost small">Resultados disfraces</button>
-    <button id="verT0" class="btn ghost small">Resultados turrones</button>
+    <button id="verD0" class="btn ghost small">🔒 Resultados disfraces</button>
+    <button id="verT0" class="btn ghost small">🔒 Resultados turrones</button>
   </div>
 </main>
 
 <!-- MENU -->
 <main id="menu" class="wrap menu hidden">
   <h2>Hola, <span id="mNombre"></span> 👻</h2>
-  <p class="sub">¿Qué quieres calificar primero?</p>
+  <p class="sub" id="gracias" hidden style="color:var(--orange);font-weight:800">¡Gracias! Tus votos se guardaron. 🎉</p>
+  <p class="sub">¿Qué quieres calificar?</p>
   <button class="opt o1" id="optD"><div class="em">🎃</div><h3>Elige tu concurso de disfraces</h3><p>Califica el mejor disfraz, el más creativo y el más divertido.</p></button>
   <button class="opt o2" id="optT"><div class="em">🍬</div><h3>Evaluemos turrones</h3><p>Degustación de 4 marcas y votación del favorito.</p></button>
   <div class="linkrow">
-    <button id="verD1" class="btn ghost small">Resultados disfraces</button>
-    <button id="verT1" class="btn ghost small">Resultados turrones</button>
+    <button id="verD1" class="btn ghost small">🔒 Resultados disfraces</button>
+    <button id="verT1" class="btn ghost small">🔒 Resultados turrones</button>
     <button id="cambiar" class="btn ghost small">Cambiar nombre</button>
+  </div>
+</main>
+
+<!-- CODIGO -->
+<main id="codigo" class="wrap menu hidden">
+  <h2>🔒 Resultados</h2>
+  <p class="sub">Solo para organizadores. Ingresa el código de acceso.</p>
+  <label class="hola"><input id="codigoIn" type="password" placeholder="código" maxlength="40" autocomplete="off"></label>
+  <p class="err" id="codigoErr"></p>
+  <div class="linkrow">
+    <button id="codigoOk" class="btn" disabled>Ver resultados</button>
+    <button id="codigoVolver" class="btn ghost">Volver</button>
   </div>
 </main>
 
@@ -229,7 +242,7 @@ const MODOS = {
 const $ = id => document.getElementById(id);
 const norm = s => String(s).trim().toLowerCase();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-let nombre = "", modo = "turrones", items = [], paso = 0, notas = {}, resModo = "disfraces";
+let codigo = "", pendiente = "", nombre = "", modo = "turrones", items = [], paso = 0, notas = {}, resModo = "disfraces";
 
 /* ===== Almacenamiento ===== */
 const memoria = {};
@@ -253,7 +266,7 @@ async function guardar(m, filas) {
 }
 async function cargar(m) {
   if (API_URL) {
-    const r = await fetch(API_URL + "?hoja=" + MODOS[m].hoja);
+    const r = await fetch(API_URL + "?hoja=" + MODOS[m].hoja + "&codigo=" + encodeURIComponent(codigo));
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || "Error al leer");
     return j.filas || [];
@@ -263,7 +276,7 @@ async function cargar(m) {
 
 /* ===== Navegación ===== */
 function mostrar(id) {
-  ["login", "menu", "cata", "res"].forEach(x => $(x).classList.toggle("hidden", x !== id));
+  ["login", "menu", "cata", "res", "codigo"].forEach(x => $(x).classList.toggle("hidden", x !== id));
   window.scrollTo(0, 0);
 }
 $("nombre").addEventListener("input", e => $("entrar").disabled = !e.target.value.trim());
@@ -322,7 +335,7 @@ async function avanzar() {
   const filas = items.filter(t => !notas[t].skip).map(t => ({ fecha, nombre, [M.clave]: t, ...notas[t] }));
   if (!filas.length) { alert("No calificaste a nadie todavía."); return; }
   $("sig").disabled = true; $("sig").textContent = "Guardando…";
-  try { await guardar(modo, filas); verResultados(modo); }
+  try { await guardar(modo, filas); $("gracias").hidden = false; mostrar("menu"); }
   catch (err) { alert("No se pudo guardar: " + err.message); pintar(); }
 }
 
@@ -341,7 +354,17 @@ function calcular(m, filas) {
   }).filter(o => m === "turrones" || o.votos).sort((a, b) => b[main] - a[main] || b.votos - a.votos);
 }
 
+function pedirCodigo(m, error) {
+  pendiente = m; $("codigoIn").value = ""; $("codigoOk").disabled = true; $("codigoErr").textContent = error || "";
+  mostrar("codigo"); $("codigoIn").focus();
+}
+$("codigoIn").addEventListener("input", e => $("codigoOk").disabled = !e.target.value.trim());
+$("codigoIn").addEventListener("keydown", e => { if (e.key === "Enter" && !$("codigoOk").disabled) $("codigoOk").click(); });
+$("codigoOk").onclick = () => { codigo = $("codigoIn").value.trim(); verResultados(pendiente); };
+$("codigoVolver").onclick = () => mostrar(nombre ? "menu" : "login");
+
 async function verResultados(m) {
+  if (API_URL && !codigo) return pedirCodigo(m);
   resModo = m;
   const M = MODOS[m], main = M.criterios.find(c => c.main).k;
   mostrar("res");
@@ -350,7 +373,9 @@ async function verResultados(m) {
   $("resSub").textContent = ""; $("winner").innerHTML = "";
   $("rank").innerHTML = "<p class='note'>Cargando…</p>"; $("tabla").innerHTML = "";
   let filas;
-  try { filas = await cargar(m); } catch (e) { $("rank").innerHTML = "<p class='err'>No se pudieron cargar los datos.</p>"; return; }
+  try { filas = await cargar(m); } catch (e) {
+    if (/código/i.test(e.message)) { codigo = ""; return pedirCodigo(m, "Código incorrecto."); }
+    $("rank").innerHTML = "<p class='err'>No se pudieron cargar los datos.</p>"; return; }
   ultimas = filas;
   const r = calcular(m, filas);
   const personas = new Set(filas.map(f => norm(f.nombre))).size;
